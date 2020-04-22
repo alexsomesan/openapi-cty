@@ -98,11 +98,19 @@ func (f foapiv2) getTypeFromSchema(elem *openapi3.Schema) (cty.Type, error) {
 			}
 			atts[p] = pt
 		}
-
 		return cty.Object(atts), nil
 
 	case "array":
-		// TODO
+		it, err := f.resolveSchemaRef(elem.Items)
+		if err != nil {
+			return cty.NilType, fmt.Errorf("failed to resolve schema for items: %s", err)
+		}
+		t, err := f.getTypeFromSchema(it)
+		if err != nil {
+			return cty.NilType, err
+		}
+		return cty.List(t), nil
+
 	case "string":
 		return cty.String, nil
 
@@ -111,6 +119,10 @@ func (f foapiv2) getTypeFromSchema(elem *openapi3.Schema) (cty.Type, error) {
 
 	case "number":
 		return cty.Number, nil
+
+	case "integer":
+		return cty.Number, nil
+
 	}
-	return cty.NilType, errors.New("unknown type")
+	return cty.NilType, fmt.Errorf("unknown type: %s", elem.Type)
 }

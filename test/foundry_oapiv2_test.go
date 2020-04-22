@@ -50,3 +50,17 @@ func TestGetPodSecurityPolicyType(t *testing.T) {
 		t.Fatalf("%s type returned - expected an Object", ty.FriendlyName())
 	}
 }
+
+func TestGetDeploymentType(t *testing.T) {
+	tf, err := buildFixtureFoundry()
+	if err != nil {
+		t.Skip()
+	}
+	ty, err := tf.GetTypeById("io.k8s.api.apps.v1.Deployment")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !ty.IsObjectType() {
+		t.Fatalf("%s type returned - expected an Object", ty.FriendlyName())
+	}
+}
