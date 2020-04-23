@@ -63,7 +63,7 @@ func TestGetType(t *testing.T) {
 		t.Skip()
 	}
 	for _,s := range samples{
-		rt, err := tf.GetTypeById(s.id)
+		rt, err := tf.GetTypeByID(s.id)
 		if err != nil {
 			t.Fatal(err)
 		}
