@@ -26,11 +26,11 @@ var samples = testSamples{
 			"creationTimestamp": cty.String,
 			"deletionGracePeriodSeconds": cty.Number,
 			"deletionTimestamp": cty.String,
-			"finalizers": cty.List(cty.String),
+			"finalizers": cty.Tuple([]cty.Type{cty.String}),
 			"generateName": cty.String,
 			"generation": cty.Number,
 			"labels": cty.Tuple([]cty.Type{cty.String}),
-			"managedFields": cty.List(
+			"managedFields": cty.Tuple([]cty.Type{
 				cty.Object(map[string]cty.Type{
 					"apiVersion": cty.String,
 					"fieldsType": cty.String,
@@ -39,17 +39,17 @@ var samples = testSamples{
 					"operation": cty.String,
 					"time": cty.String,
 				}),
-			),
+			}),
 			"name": cty.String,
 			"namespace": cty.String,
-			"ownerReferences": cty.List(cty.Object(map[string]cty.Type{
+			"ownerReferences": cty.Tuple([]cty.Type{cty.Object(map[string]cty.Type{
 				"apiVersion": cty.String,
 				"blockOwnerDeletion": cty.Bool,
 				"controller": cty.Bool,
 				"kind": cty.String,
 				"name": cty.String,
 				"uid": cty.String,
-			})),
+			})}),
 			"resourceVersion": cty.String,
 			"selfLink": cty.String,
 			"uid": cty.String,

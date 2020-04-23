@@ -139,7 +139,7 @@ func (f foapiv2) getTypeFromSchema(elem *openapi3.Schema) (cty.Type, error) {
 		if err != nil {
 			return cty.NilType, err
 		}
-		return cty.List(t), nil
+		return cty.Tuple([]cty.Type{t}), nil
 
 	case "string":
 
