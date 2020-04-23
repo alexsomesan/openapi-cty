@@ -17,15 +17,19 @@ func NewFoundryFromSpecV2(spec []byte) (Foundry, error) {
 	if len(spec) < 6 { // unlikely to be valid json
 		return nil, errors.New("empty spec")
 	}
-	f := foapiv2{}
-	err := json.Unmarshal(spec, &(f.swagger))
+
+	var swg openapi2.Swagger
+	err := json.Unmarshal(spec, &swg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse spec: %s", err)
 	}
+
+	f := foapiv2{&swg}
 	d := f.swagger.Definitions
 	if d == nil || len(d) == 0 {
 		return nil, errors.New("spec has no type information")
 	}
+
 	return f, nil
 }
 
@@ -35,7 +39,7 @@ type Foundry interface {
 }
 
 type foapiv2 struct {
-	swagger openapi2.Swagger
+	swagger *openapi2.Swagger
 }
 
 // GetTypeById looks up a type by its fully qualified ID in the Definitions sections of
@@ -84,11 +88,32 @@ func (f foapiv2) getTypeFromSchema(elem *openapi3.Schema) (cty.Type, error) {
 	}
 
 	switch elem.Type {
-	case "object":
-		atts := make(map[string]cty.Type, len(elem.Properties))
 
-		for p, v := range elem.Properties {
-			s, err := f.resolveSchemaRef(v)
+	case "object":
+
+		switch {
+
+		case elem.Properties != nil && elem.AdditionalProperties == nil:
+
+			// this is a standard OpenAPI object
+			atts := make(map[string]cty.Type, len(elem.Properties))
+			for p, v := range elem.Properties {
+				s, err := f.resolveSchemaRef(v)
+				if err != nil {
+					return cty.NilType, fmt.Errorf("failed to resolve schema: %s", err)
+				}
+				pt, err := f.getTypeFromSchema(s)
+				if err != nil {
+					return cty.NilType, err
+				}
+				atts[p] = pt
+			}
+			return cty.Object(atts), nil
+
+		case elem.Properties == nil && elem.AdditionalProperties != nil:
+
+			// this is how OpenAPI defines associative arrays
+			s, err := f.resolveSchemaRef(elem.AdditionalProperties)
 			if err != nil {
 				return cty.NilType, fmt.Errorf("failed to resolve schema: %s", err)
 			}
@@ -96,11 +121,16 @@ func (f foapiv2) getTypeFromSchema(elem *openapi3.Schema) (cty.Type, error) {
 			if err != nil {
 				return cty.NilType, err
 			}
-			atts[p] = pt
+			return cty.Tuple([]cty.Type{pt}), nil
+
+		case elem.Properties == nil && elem.AdditionalProperties == nil:
+			// this is a strange case, encountered with io.k8s.apimachinery.pkg.apis.meta.v1.FieldsV1
+			return cty.DynamicPseudoType, nil
+
 		}
-		return cty.Object(atts), nil
 
 	case "array":
+
 		it, err := f.resolveSchemaRef(elem.Items)
 		if err != nil {
 			return cty.NilType, fmt.Errorf("failed to resolve schema for items: %s", err)
@@ -112,15 +142,19 @@ func (f foapiv2) getTypeFromSchema(elem *openapi3.Schema) (cty.Type, error) {
 		return cty.List(t), nil
 
 	case "string":
+
 		return cty.String, nil
 
 	case "boolean":
+
 		return cty.Bool, nil
 
 	case "number":
+
 		return cty.Number, nil
 
 	case "integer":
+
 		return cty.Number, nil
 
 	}
