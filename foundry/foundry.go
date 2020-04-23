@@ -35,7 +35,7 @@ func NewFoundryFromSpecV2(spec []byte) (Foundry, error) {
 
 // Foundry is a mechanism to construct cty.Type types out of OpenAPI specifications
 type Foundry interface {
-	GetTypeById(id string) (cty.Type, error)
+	GetTypeByID(id string) (cty.Type, error)
 }
 
 type foapiv2 struct {
@@ -44,7 +44,7 @@ type foapiv2 struct {
 
 // GetTypeById looks up a type by its fully qualified ID in the Definitions sections of
 // the OpenAPI spec and returns its nearest cty.Type equivalent
-func (f foapiv2) GetTypeById(id string) (cty.Type, error) {
+func (f foapiv2) GetTypeByID(id string) (cty.Type, error) {
 	swd, ok := f.swagger.Definitions[id]
 
 	if !ok {
