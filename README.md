@@ -1,4 +1,4 @@
-# openapi-cty
+# An OpenAPI v2 to cty.Type type foundry
 A Go library for synthesizing [github.com/zclconf/go-cty](https://github.com/zclconf/go-cty) types types from an OpenAPI document
 
 **WORK IN PROGRESS**
