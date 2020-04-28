@@ -12,15 +12,15 @@ import (
 )
 
 type testSample struct {
-	id     string
-	expect cty.Type
+	id   string
+	want cty.Type
 }
 type testSamples []testSample
 
 var samples = testSamples{
 	{
 		id: "io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta",
-		expect: cty.Object(map[string]cty.Type{
+		want: cty.Object(map[string]cty.Type{
 			"annotations":                cty.Tuple([]cty.Type{cty.String}),
 			"clusterName":                cty.String,
 			"creationTimestamp":          cty.String,
@@ -55,6 +55,10 @@ var samples = testSamples{
 			"uid":             cty.String,
 		}),
 	},
+	{
+		id:   "io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceDefinition",
+		want: cty.Object(map[string]cty.Type{}),
+	},
 }
 
 func TestGetType(t *testing.T) {
@@ -63,13 +67,23 @@ func TestGetType(t *testing.T) {
 		t.Skip()
 	}
 	for _, s := range samples {
-		rt, err := tf.GetTypeByID(s.id)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if !rt.Equals(s.expect) {
-			t.Fatalf("\nRETURNED %s\nEXPECTED: %s", spew.Sdump(rt), spew.Sdump(s.expect))
-		}
+		t.Run(s.id,
+			func(t *testing.T) {
+				rt, err := tf.GetTypeByID(s.id)
+				if err != nil {
+					t.Fatal(fmt.Errorf("GetTypeByID() failed: %s", err))
+				}
+				if !rt.Equals(s.want) {
+					t.Fatalf("\nRETURNED %s\nEXPECTED: %s", spew.Sdump(rt), spew.Sdump(s.want))
+				}
+			})
+	}
+}
+
+func TestFoundryOAPIv2(t *testing.T) {
+	_, err := buildFixtureFoundry()
+	if err != nil {
+		t.Error(err)
 	}
 }
 
@@ -92,11 +106,4 @@ func buildFixtureFoundry() (foundry.Foundry, error) {
 	}
 
 	return tf, nil
-}
-
-func TestFoundryOAPIv2(t *testing.T) {
-	_, err := buildFixtureFoundry()
-	if err != nil {
-		t.Error(err)
-	}
 }
