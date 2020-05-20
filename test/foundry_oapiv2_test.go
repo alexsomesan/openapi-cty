@@ -21,16 +21,16 @@ var samples = testSamples{
 	{
 		id: "io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta",
 		want: cty.Object(map[string]cty.Type{
-			"annotations":                cty.Tuple([]cty.Type{cty.String}),
+			"annotations":                cty.List(cty.String),
 			"clusterName":                cty.String,
 			"creationTimestamp":          cty.String,
 			"deletionGracePeriodSeconds": cty.Number,
 			"deletionTimestamp":          cty.String,
-			"finalizers":                 cty.Tuple([]cty.Type{cty.String}),
+			"finalizers":                 cty.List(cty.String),
 			"generateName":               cty.String,
 			"generation":                 cty.Number,
-			"labels":                     cty.Tuple([]cty.Type{cty.String}),
-			"managedFields": cty.Tuple([]cty.Type{
+			"labels":                     cty.List(cty.String),
+			"managedFields": cty.List(
 				cty.Object(map[string]cty.Type{
 					"apiVersion": cty.String,
 					"fieldsType": cty.String,
@@ -38,27 +38,27 @@ var samples = testSamples{
 					"manager":    cty.String,
 					"operation":  cty.String,
 					"time":       cty.String,
-				}),
-			}),
+				})),
 			"name":      cty.String,
 			"namespace": cty.String,
-			"ownerReferences": cty.Tuple([]cty.Type{cty.Object(map[string]cty.Type{
-				"apiVersion":         cty.String,
-				"blockOwnerDeletion": cty.Bool,
-				"controller":         cty.Bool,
-				"kind":               cty.String,
-				"name":               cty.String,
-				"uid":                cty.String,
-			})}),
+			"ownerReferences": cty.List(
+				cty.Object(map[string]cty.Type{
+					"apiVersion":         cty.String,
+					"blockOwnerDeletion": cty.Bool,
+					"controller":         cty.Bool,
+					"kind":               cty.String,
+					"name":               cty.String,
+					"uid":                cty.String,
+				})),
 			"resourceVersion": cty.String,
 			"selfLink":        cty.String,
 			"uid":             cty.String,
 		}),
 	},
-	{
-		id:   "io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceDefinition",
-		want: cty.Object(map[string]cty.Type{}),
-	},
+	// {
+	// 	id:   "io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceDefinition",
+	// 	want: cty.Object(map[string]cty.Type{}),
+	// },
 }
 
 func TestGetType(t *testing.T) {
