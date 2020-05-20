@@ -21,7 +21,7 @@ var samples = testSamples{
 	{
 		id: "io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta",
 		want: cty.Object(map[string]cty.Type{
-			"annotations":                cty.List(cty.String),
+			"annotations":                cty.Map(cty.String),
 			"clusterName":                cty.String,
 			"creationTimestamp":          cty.String,
 			"deletionGracePeriodSeconds": cty.Number,
@@ -29,7 +29,7 @@ var samples = testSamples{
 			"finalizers":                 cty.List(cty.String),
 			"generateName":               cty.String,
 			"generation":                 cty.Number,
-			"labels":                     cty.List(cty.String),
+			"labels":                     cty.Map(cty.String),
 			"managedFields": cty.List(
 				cty.Object(map[string]cty.Type{
 					"apiVersion": cty.String,

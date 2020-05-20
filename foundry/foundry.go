@@ -109,7 +109,7 @@ func (f foapiv2) getTypeFromSchema(elem *openapi3.Schema) (cty.Type, error) {
 			return cty.Object(atts), nil
 
 		case elem.Properties == nil && elem.AdditionalProperties != nil:
-			// this is how OpenAPI defines arrays
+			// this is how OpenAPI defines associative arrays
 			s, err := f.resolveSchemaRef(elem.AdditionalProperties)
 			if err != nil {
 				return cty.NilType, fmt.Errorf("failed to resolve schema: %s", err)
@@ -118,7 +118,7 @@ func (f foapiv2) getTypeFromSchema(elem *openapi3.Schema) (cty.Type, error) {
 			if err != nil {
 				return cty.NilType, err
 			}
-			return cty.List(pt), nil
+			return cty.Map(pt), nil
 
 		case elem.Properties == nil && elem.AdditionalProperties == nil:
 			// this is a strange case, encountered with io.k8s.apimachinery.pkg.apis.meta.v1.FieldsV1
@@ -138,19 +138,15 @@ func (f foapiv2) getTypeFromSchema(elem *openapi3.Schema) (cty.Type, error) {
 		return cty.List(t), nil
 
 	case "string":
-
 		return cty.String, nil
 
 	case "boolean":
-
 		return cty.Bool, nil
 
 	case "number":
-
 		return cty.Number, nil
 
 	case "integer":
-
 		return cty.Number, nil
 
 	case "":
