@@ -55,6 +55,17 @@ var samples = testSamples{
 			"uid":             cty.String,
 		}),
 	},
+	{
+		id: "io.k8s.api.core.v1.ServicePort",
+		want: cty.Object(map[string]cty.Type{
+			"appProtocol": cty.String,
+			"name":        cty.String,
+			"nodePort":    cty.Number,
+			"port":        cty.Number,
+			"protocol":    cty.String,
+			"targetPort":  cty.Number,
+		}),
+	},
 	// {
 	// 	id:   "io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceDefinition",
 	// 	want: cty.Object(map[string]cty.Type{}),
