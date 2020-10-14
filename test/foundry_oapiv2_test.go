@@ -63,7 +63,7 @@ var samples = testSamples{
 			"nodePort":    cty.Number,
 			"port":        cty.Number,
 			"protocol":    cty.String,
-			"targetPort":  cty.Number,
+			"targetPort":  cty.DynamicPseudoType,
 		}),
 	},
 	// {
